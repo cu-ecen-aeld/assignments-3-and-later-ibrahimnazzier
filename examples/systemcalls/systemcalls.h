@@ -7,6 +7,7 @@
 #include <sys/wait.h>  
 #include <errno.h> 
 #include <fcntl.h> 
+#include <syslog.h>
 
 bool do_system(const char *command);
 

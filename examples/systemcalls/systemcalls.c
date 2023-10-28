@@ -67,21 +67,23 @@ bool do_exec(int count, ...)
     pid_t pid = fork();
     if (pid == -1) 
         return false;
+
     else if (pid == 0)
     {
         int ret = execv(command[0],command);
        if(ret == -1)
        {
         perror("execv");
-        exit(EXIT_FAILURE);
+         exit(EXIT_FAILURE);
+        return false;
        }
     }
-        
     if(waitpid(pid, &status, 0)==-1)
         return false;
     else if (WIFEXITED(status))
         if(WEXITSTATUS(status) != 0)
              return false;
+    return true;
 
     va_end(args);
 
@@ -119,30 +121,54 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
  *
 */
     fflush(stdout);
+    
     int status;
+    
     pid_t pid = fork();
+    
     if (pid == -1) 
         return false;
+    
     else if (pid == 0)
     {
+        // opening the needed file.
         int fd = open (outputfile , O_WRONLY | O_CREAT | O_TRUNC | O_SYNC, 0644);
+        
+        // checking for open() errors
+        if(fd < 0)
+        {
+            perror("open");
+            return false;
+        }
+
+        // redirecting stdout to our file
         dup2(fd,STDOUT_FILENO);
+        
+        // close fd to release the file descriptor for another file  
+        close(fd);
+
+    // executing passed command
     int ret = execv(command[0],command);
+
+       // handling execv() errors 
        if(ret == -1)
        {
         perror("execv");
         exit(EXIT_FAILURE);
        }
+
     }
         
-    if(waitpid(pid, &status, 0)==-1)
+   if(waitpid(pid, &status, 0)==-1)
         return false;
     else if (WIFEXITED(status))
-        return WEXITSTATUS(status);
-    return false;
-
+        if(WEXITSTATUS(status) != 0)
+             return false;
+    return true;
 
     va_end(args);
 
-    return true;
+    
+
+    return true;    
 }
