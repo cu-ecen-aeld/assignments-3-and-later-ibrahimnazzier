@@ -20,6 +20,7 @@ int ret = system(cmd);
 if(ret  == 0)
     return true;
 else {
+    perror("system");
     return false;
 }
 }
@@ -62,12 +63,19 @@ bool do_exec(int count, ...)
  *   as second argument to the execv() command.
  *
 */
+    if (command[0][0] != '/')
+    {
+        perror("This in not the absolute path");
+        return false;
+    }
     fflush(stdout);
     int status;
     pid_t pid = fork();
     if (pid == -1) 
+    {
+        perror("fork");
         return false;
-
+    }
     else if (pid == 0)
     {
         int ret = execv(command[0],command);
@@ -78,8 +86,10 @@ bool do_exec(int count, ...)
         return false;
        }
     }
-    if(waitpid(pid, &status, 0)==-1)
+   if(waitpid(pid, &status, 0)==-1)
+   {    perror("waitpid");
         return false;
+   }
     else if (WIFEXITED(status))
         if(WEXITSTATUS(status) != 0)
              return false;
@@ -127,7 +137,10 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     pid_t pid = fork();
     
     if (pid == -1) 
+    {
+        perror("fork");
         return false;
+    }
     
     else if (pid == 0)
     {
@@ -142,8 +155,11 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
         }
 
         // redirecting stdout to our file
-        dup2(fd,STDOUT_FILENO);
-        
+       if(dup2(fd,STDOUT_FILENO)<0)
+       {
+	    perror("dup2"); 
+	    return false; 
+	    }
         // close fd to release the file descriptor for another file  
         close(fd);
 
@@ -160,7 +176,9 @@ bool do_exec_redirect(const char *outputfile, int count, ...)
     }
         
    if(waitpid(pid, &status, 0)==-1)
+   {    perror("waitpid");
         return false;
+   }
     else if (WIFEXITED(status))
         if(WEXITSTATUS(status) != 0)
              return false;
