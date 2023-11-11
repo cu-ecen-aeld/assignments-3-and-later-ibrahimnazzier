@@ -14,7 +14,7 @@ default:$(executable)
 
 $(executable):$(src_files)
 	$(COMP) $< -o $@
-ifdef CROSS
+ifdef CROSS 
 	@touch ../assignments/assignment2/filetype.txt && file $(executable) 1> ../assignments/assignment2/fileresult.txt
 endif
 .PHONY: clean
