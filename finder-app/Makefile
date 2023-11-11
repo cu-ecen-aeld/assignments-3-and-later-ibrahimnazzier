@@ -3,10 +3,10 @@ src_files = *.c
 #checking if Cross compilation is valid
 #I used C_CROSS as an alias for aarch64-none-linux-gnu-gcc
 ifndef CROSS
-executable = writer
+executable = writer_nat
 COMP = gcc
 else
-executable = writer_cross
+executable = writer
 COMP = aarch64-none-linux-gnu-gcc
 endif
 
