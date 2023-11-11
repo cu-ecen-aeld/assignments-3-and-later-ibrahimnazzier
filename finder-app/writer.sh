@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #assignment 1 writer.sh
 #script to write a string to a file
 #auther: Ibrahim Nazzier
