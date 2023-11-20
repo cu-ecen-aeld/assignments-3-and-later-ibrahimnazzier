@@ -42,7 +42,7 @@ bool start_thread_obtaining_mutex(pthread_t *thread, pthread_mutex_t *mutex,int 
     ThreadData->wait_to_release_ms = wait_to_release_ms;
     
 
-    int res = pthread_create(thread, NULL, threadfunc, ThreadData); 
+    int res = pthread_create(thread, NULL, threadfunc, ThreadData);  
     if (res != 0)
     {
         fprintf(stderr, "Error creating thread: %d\n", res);
