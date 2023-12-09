@@ -1,5 +1,6 @@
 *.o
 writer
+writer_cross
 Test_*_Runner.c
 build/
 crosstool-ng
