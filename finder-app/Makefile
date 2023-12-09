@@ -1,15 +1,10 @@
-CC=$(CROSS_COMPILE)gcc
-CFLAGS=
-
 all: writer
 
-writer.o: writer.c 
-	$(CC) -c -o $@ $< $(CFLAGS)
+writer.o: writer.c
+	$(CC) $(CCFLAGS) -c $^
 
 writer: writer.o
-	$(CC) -o $@ $^ $(CFLAGS) 
+	$(CC) $(LDFLAGS) $^ -o $@
 
-.PHONY: clean
-
-clean:
-	rm -f *.o writer 
+clean :
+	rm -f writer writer.o
